@@ -1,0 +1,8 @@
+<h2>Top tasks</h2>
+@for (task of tasks; track task._id) {
+  <div>
+    <a routerLink="/detail/{{task._id}}">
+      {{task.description}}
+    </a>
+  </div>
+}

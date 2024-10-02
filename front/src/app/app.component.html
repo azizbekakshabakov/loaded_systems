@@ -1,0 +1,38 @@
+<mat-toolbar color="primary">
+  <!-- <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+    <mat-icon>menu</mat-icon>
+  </button> -->
+  <label><a routerLink="/tasks" mat-button style="margin-left: 1rem;" class="example-icon" aria-label="Example icon-button with share icon">
+    CarRenting
+  </a></label>
+  @if (isMod()) {
+    <a routerLink="/add-auto" mat-button style="margin-left: 1rem;" class="example-icon" aria-label="Example icon-button with share icon">
+      Добавить авто
+    </a>
+  }
+  @if (isUser()) {
+    <a routerLink="/rents" mat-button style="margin-left: 1rem;" class="example-icon" aria-label="Example icon-button with share icon">
+      Мои аренды
+    </a>
+    <a routerLink="/set-balance" mat-button style="margin-left: 1rem;" class="example-icon" aria-label="Example icon-button with share icon">
+      Пополнить счет
+    </a>
+  }
+  <span class="example-spacer"></span>
+  @if (isToken()) {
+    <button (click)="logout()" mat-button class="example-icon" aria-label="Example icon-button with share icon">
+      Выйти
+    </button>
+  } @else {
+    <a routerLink="/register" mat-button class="example-icon" aria-label="Example icon-button with share icon">
+      Регистрация
+    </a>
+    <a routerLink="/login" mat-button class="example-icon" aria-label="Example icon-button with share icon">
+      Войти
+    </a>
+  }
+</mat-toolbar>
+<div>
+  <router-outlet></router-outlet>
+  <!-- <app-messages style="position: absolute; top: 90px; right: 50px; width: 500px;"></app-messages> -->
+</div>

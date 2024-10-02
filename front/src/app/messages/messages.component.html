@@ -1,0 +1,9 @@
+<div *ngIf="messageService.messages.length">
+
+    <h2>Журнал запросов</h2>
+    <button matSuffix mat-raised-button aria-label="Clear" type="button" class="clear"
+        (click)="messageService.clear()">Очистить историю</button>
+    <ul>
+        <li *ngFor='let message of messageService.messages'> {{message}} </li>
+    </ul>
+</div>

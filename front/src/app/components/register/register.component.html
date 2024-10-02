@@ -1,0 +1,43 @@
+<div class="container">
+<h1>Регистрация</h1>
+<mat-form-field class="example-form-field">
+  <mat-label>Логин</mat-label>
+  <input
+    matInput
+    [(ngModel)]="email"
+    type="text"
+    (keyup.enter)="register();"
+    id="emailInput"
+  >
+  @if (email) {
+    <button matSuffix mat-icon-button aria-label="Clear" (click)="email=''">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+</mat-form-field>
+<mat-form-field class="example-form-field">
+  <mat-label>Пароль</mat-label>
+  <input
+    matInput
+    [(ngModel)]="password"
+    type="password"
+    (keyup.enter)="register();"
+    id="passwordInput"
+  >
+  @if (password) {
+    <button matSuffix mat-icon-button aria-label="Clear" (click)="password=''">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+</mat-form-field>
+<mat-form-field>
+  <mat-label>Роль</mat-label>
+  <mat-select [(ngModel)]="role" matNativeControl required>
+    <mat-option value="user">Клиент</mat-option>
+    <mat-option value="mod">Модератор</mat-option>
+  </mat-select>
+</mat-form-field>
+<div>
+  <button type="button" mat-raised-button color="primary" style="margin-left: 5px;" (click)="register()">Сохранить</button>
+</div>
+</div>

@@ -1,0 +1,17 @@
+ul {
+  list-style-type: none;
+  padding-inline-start: 0;
+  margin-top: 4px;
+}
+.anti-link {
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Inherit color from parent */
+}
+.anti-link:hover {
+  text-decoration: none; /* Remove underline on hover */
+  color: inherit; /* Inherit color from parent on hover */
+}
+.strikethrough {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}

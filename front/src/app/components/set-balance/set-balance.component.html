@@ -1,0 +1,19 @@
+<h1>Пополнить баланс</h1>
+<mat-form-field class="example-form-field">
+  <mat-label>Количество</mat-label>
+  <input
+    matInput
+    [(ngModel)]="amount"
+    type="number"
+    (keyup.enter)="setBalance(amount);"
+    id="emailInput"
+  >
+  @if (amount) {
+    <button matSuffix mat-icon-button aria-label="Clear" (click)="amount=0">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+</mat-form-field>
+<div>
+  <button type="button" mat-raised-button color="primary" style="margin-left: 5px;" (click)="setBalance(amount)">ОК</button>
+</div>

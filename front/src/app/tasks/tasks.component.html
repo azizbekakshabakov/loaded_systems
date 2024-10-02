@@ -1,0 +1,33 @@
+<h1 style="margin-left: 1rem;">Ассортимент</h1>
+@if (isUser()) {<div style="text-align: end; font-weight: 600;">Баланс: {{balance}}$</div>}
+<!-- <ul> -->
+<mat-grid-list style="margin-left: 1rem; margin-right: 1rem;" cols="3" rowHeight="1.5:1">
+    @for (task of tasks; track task._id; let index = $index) {
+        @if (task.enabled) {
+            <!-- <li> -->
+                    <mat-grid-tile>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>
+                            <div><img src="http://localhost:3000/{{task.image}}" width="400px" /></div>
+                            <div><label style="font-weight: 900; font-size: 24px;">{{task.name}} {{task.tariff}}$/день</label></div>
+                            <div><label>{{task.description}}</label></div>
+                        </span>
+                        @if (isMod()) {
+                            <span>
+                                <a routerLink="/detail/{{task._id}}" mat-raised-button color="primary" style="margin-bottom: 5px;" class="anti-link">Изменить</a>
+                                <button type="button" mat-raised-button color="accent" style="margin-left: 5px;" (click)="delete(task)">Удолить</button>
+                            </span>
+                        }
+                        @if (isUser()) {
+                            <span>
+                                <button type="button" mat-raised-button color="accent" style="margin-left: 5px;" (click)="rent(task)">Аренда</button>
+                            </span>
+                        }
+                    </div>
+                    <mat-divider style="margin-top: 1rem;" *ngIf="index != tasks.length-1"></mat-divider>
+                    </mat-grid-tile>
+            <!-- </li> -->
+        }
+    }
+</mat-grid-list>
+<!-- </ul> -->
