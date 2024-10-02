@@ -73,8 +73,8 @@ router.put("/:id", authModMiddleware, async (req, res) => {
 });
 
 router.delete("/:id", authModMiddleware, async (req, res) => {
-  await Car.findByIdAndDelete(req.params.id);
-  res.status(200).send({ message: "Задача удалена" });
+    await Car.findByIdAndDelete(req.params.id);
+    res.status(200).send({ message: "Задача удалена" });
 });
 
 module.exports = router;

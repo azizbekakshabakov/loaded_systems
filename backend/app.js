@@ -3,6 +3,10 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+// GraphQL
+const graphqlSchema = require('./graphql/schema');
+const { graphqlHTTP } = require('express-graphql');
+const {authModMiddleware} = require("./middleware/auth");
 const atlasCreds = require('./atlasCreds');
 
 // everyday
@@ -34,6 +38,12 @@ app.use('/car/', indexRouter);
 app.use('/auth/', authRouter);
 app.use('/rent/', rentRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// GraphQL routes
+app.use('/graphql', /*authModMiddleware, */graphqlHTTP({
+  schema: graphqlSchema,
+  graphiql: true, // Enable GraphiQL in development mode
+}));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
