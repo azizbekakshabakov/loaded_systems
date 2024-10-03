@@ -1,8 +1,9 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require("bcrypt");
-var express = require('express');
-var router = express.Router();
-const {User} = require('../schemas/user');
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import { Router } from 'express';
+import { User } from '../schemas/user.js';
+
+const router = Router();
 
 router.post("/register", async (req, res) => {
 
@@ -60,4 +61,4 @@ const generateToken = (id) => {
   });
 };
 
-module.exports = router;
+export default router;

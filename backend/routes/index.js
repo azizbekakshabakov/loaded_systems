@@ -1,25 +1,32 @@
-var express = require('express');
-var router = express.Router();
-const bodyParser = require('body-parser');
-const multer = require('multer');
-const {Car} = require('../schemas/car');
-const { authModMiddleware, authUserMiddleware} = require('../middleware/auth');
-const { redisClient } = require('../modules/redisClient');
+import { Router } from 'express';
+import multer from 'multer';
+import FormData from 'form-data';
+import { Car } from '../schemas/car.js';
+import { authModMiddleware, authUserMiddleware } from '../middleware/auth.js';
+import { redisClient } from '../modules/redisClient.js';
+import axios from 'axios';
+import fs from "fs";
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-      cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-      cb(null, Date.now() + '-' + file.originalname);
-  }
-});
+// СОЗДАТЬ ЭКЗЕМПЛЯР Router
+const router = Router();
+
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.post('/', authModMiddleware, upload.single('image'), async (req, res) => {
   try {
       const { name, description, tariff } = req.body;
-      const image = req.file ? req.file.path : null;
+
+      const formData = new FormData();
+      formData.append('image', req.file.buffer, req.file.originalname);
+
+      // Forward the image to localhost:3001
+      const result = await axios.post('http://localhost:3001/add-image', formData, {
+          headers: {
+              ...formData.getHeaders(),
+          },
+      });
+      const image = result['data']['image'];
 
       const newCar = new Car({
           name,
@@ -32,7 +39,8 @@ router.post('/', authModMiddleware, upload.single('image'), async (req, res) => 
 
       res.status(201).json({ message: 'Car entry created successfully', car: newCar });
   } catch (error) {
-      res.status(404).json({ message: 'Error creating car entry', error });
+      // console.log(error.message);
+      res.status(404).json({ message: 'Error creating car entry', error: error.message });
   }
 });
 
@@ -77,4 +85,4 @@ router.delete("/:id", authModMiddleware, async (req, res) => {
     res.status(200).send({ message: "Задача удалена" });
 });
 
-module.exports = router;
+export default router;

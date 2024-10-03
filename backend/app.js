@@ -1,27 +1,33 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+import createError from 'http-errors';
+import express from 'express';
+import path from 'path';
+//for dirs
+import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
 // GraphQL
-const graphqlSchema = require('./graphql/schema');
-const { graphqlHTTP } = require('express-graphql');
-const {authModMiddleware} = require("./middleware/auth");
-const atlasCreds = require('./atlasCreds');
+import graphqlSchema from './graphql/schema.js';
+import { createHandler } from 'graphql-http/lib/use/express';
+import { authModMiddleware } from './middleware/auth.js';
+import atlasCreds from './atlasCreds.js';
 
 // everyday
-require('./scheduler');
+import './scheduler.js';
 
-var indexRouter = require('./routes/index');
-var authRouter = require('./routes/auth');
-var rentRouter = require('./routes/rent');
+import indexRouter from './routes/index.js';
+import authRouter from './routes/auth.js';
+import rentRouter from './routes/rent.js';
 
-var app = express();
-const cors = require('cors');
+const app = express();
+import cors from 'cors';
 
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 mongoose.connect(`mongodb+srv://adminUser:${encodeURIComponent(atlasCreds.password)}@atlascluster.zhkoeux.mongodb.net/?retryWrites=true&w=majority`);
+
+// necessary dirs
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,9 +46,9 @@ app.use('/rent/', rentRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // GraphQL routes
-app.use('/graphql', /*authModMiddleware, */graphqlHTTP({
+app.use('/graphql', /*authModMiddleware, */createHandler({
   schema: graphqlSchema,
-  graphiql: true, // Enable GraphiQL in development mode
+  context: (req, res) => ({ req, res })
 }));
 
 // catch 404 and forward to error handler
@@ -61,4 +67,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = { app };
+export { app };

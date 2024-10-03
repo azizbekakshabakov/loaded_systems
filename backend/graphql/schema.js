@@ -1,9 +1,26 @@
-const { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLNonNull, GraphQLID, GraphQLFloat } = require('graphql');
-const { Car } = require('../schemas/car');
-const { redisClient } = require('../modules/redisClient');
-const multer = require('multer');
+import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLNonNull, GraphQLID, GraphQLFloat } from 'graphql';
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
+import { Car } from '../schemas/car.js'; // Ensure the correct file extension
+import { redisClient } from '../modules/redisClient.js'; // Ensure the correct file extension
+import multer from 'multer'; // If you're using multer for file uploads
+import path from 'path';
+import fs from 'fs';
 
-// Define the CarType
+// ДЛЯ ЗАГРУЗКИ ФАЙЛА/КАРТИНОК
+const uploadImage = async (upload) => {
+    const { createReadStream, filename, mimetype } = await upload;
+    const stream = createReadStream();
+    const { ext } = path.parse(filename);
+    const filePath = `uploads/${Date.now()}${ext}`;
+
+    return new Promise((resolve, reject) => {
+        const writeStream = fs.createWriteStream(filePath);
+        stream.pipe(writeStream);
+        writeStream.on('finish', () => resolve({ filePath }));
+        writeStream.on('error', reject);
+    });
+};
+
 const CarType = new GraphQLObjectType({
     name: 'Car',
     fields: {
@@ -57,13 +74,22 @@ const Mutation = new GraphQLObjectType({
                 image: { type: GraphQLUpload }
             },
             async resolve(parent, args) {
-                const newCar = new Car({
-                    name: args.name,
-                    description: args.description,
-                    image: args.image,
-                    tariff: args.tariff
-                });
-                return await newCar.save();
+                let imagePath = null;
+
+                // Handle the file upload if the image is provided
+                if (args.image) {
+                    const { filePath } = await uploadImage(args.image);
+                    imagePath = filePath;
+                }
+
+                // Create a new car document
+                // const newCar = new Car({
+                //     name: args.name,
+                //     description: args.description,
+                //     image: imagePath, // Store the image path in the database
+                //     tariff: args.tariff
+                // });
+                // return await newCar.save();
             }
         },
         updateCar: {
@@ -95,8 +121,7 @@ const Mutation = new GraphQLObjectType({
     }
 });
 
-// Export the schema
-module.exports = new GraphQLSchema({
+export default new GraphQLSchema({
     query: RootQuery,
     mutation: Mutation
 });

@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const joi = require("joi");
+import mongoose from 'mongoose';
+import Joi from 'joi';
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true },
@@ -17,4 +17,4 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("user", userSchema);
 
-module.exports = { User };
+export { User };

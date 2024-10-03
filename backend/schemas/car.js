@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const joi = require("joi");
+import mongoose from "mongoose";
+import Joi from "joi";
 
 const carSchema = new mongoose.Schema({
   name: {type: String, required: true},
@@ -10,12 +10,12 @@ const carSchema = new mongoose.Schema({
 });
 
 const validate = (car) => {
-  const schema = joi.object({
-    description: joi.string().required(),
+  const schema = Joi.object({
+    description: Joi.string().required(),
   });
   return schema.validate(car);
 };
 
 const Car = mongoose.model("car", carSchema);
 
-module.exports = { Car, validate };
+export { Car, validate };

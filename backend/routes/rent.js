@@ -1,11 +1,10 @@
-var express = require('express');
-var router = express.Router();
-const bodyParser = require('body-parser');
-const multer = require('multer');
-const {Car} = require('../schemas/car');
-const {Usercar} = require('../schemas/usercar');
-const { authUserMiddleware } = require('../middleware/auth');
-const { User } = require('../schemas/user');
+import { Router } from 'express';           // Import Router as router
+import { Car } from '../schemas/car.js';                // Import Car model
+import { Usercar } from '../schemas/usercar.js';        // Import Usercar model
+import { authUserMiddleware } from '../middleware/auth.js'; // Import authUserMiddleware
+import { User } from '../schemas/user.js';
+
+const router = Router();
 
 router.post('/', authUserMiddleware, async (req, res) => {
   const { carId } = req.body;
@@ -91,4 +90,4 @@ router.post('/balance', authUserMiddleware, async (req, res) => {
 
 
 
-module.exports = router;
+export default router;

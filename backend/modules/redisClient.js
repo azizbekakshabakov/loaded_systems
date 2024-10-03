@@ -1,4 +1,4 @@
-const redis = require('redis');
+import redis from 'redis';
 
 const redisClient = redis.createClient({
     host: 'localhost', // Redis server host (default: localhost)
@@ -19,4 +19,4 @@ if (!redisClient.isOpen) {
     console.log("Redis: Ура");
 }
 
-module.exports = { redisClient };
+export { redisClient };

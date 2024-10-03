@@ -1,7 +1,7 @@
-const schedule = require('node-schedule');
-const {Usercar} = require('./schemas/usercar');
-const { Car } = require('./schemas/car');
-const { User } = require('./schemas/user');
+import schedule from 'node-schedule';
+import { Usercar } from './schemas/usercar.js';
+import { Car } from './schemas/car.js';
+import { User } from './schemas/user.js';
 
 async function executeCommand() {
   const usercars = await Usercar.find();

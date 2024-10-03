@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken');
-const {User} = require('../schemas/user');
+import jwt from 'jsonwebtoken';
+import { User } from '../schemas/user.js';
 
-authModMiddleware = async (req, res, next) => {
+const authModMiddleware = async (req, res, next) => {
   const token = req.header("x-auth-token");
   if (!token) return res.status(400).json({ message: "нету токена" });
   try {
@@ -18,7 +18,7 @@ authModMiddleware = async (req, res, next) => {
   }
 };
 
-authUserMiddleware = async (req, res, next) => {
+const authUserMiddleware = async (req, res, next) => {
   const token = req.header("x-auth-token");
   if (!token) return res.status(400).json({ message: "нету токена" });
   try {
@@ -35,4 +35,4 @@ authUserMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = { authModMiddleware, authUserMiddleware };
+export { authModMiddleware, authUserMiddleware };
