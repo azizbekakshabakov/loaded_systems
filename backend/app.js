@@ -8,6 +8,7 @@ import logger from 'morgan';
 // GraphQL
 import graphqlSchema from './graphql/schema.js';
 import { createHandler } from 'graphql-http/lib/use/express';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';////////////////////////////////////////////////////////////////
 import { authModMiddleware } from './middleware/auth.js';
 import atlasCreds from './atlasCreds.js';
 
@@ -44,6 +45,8 @@ app.use('/car/', indexRouter);
 app.use('/auth/', authRouter);
 app.use('/rent/', rentRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use(graphqlUploadExpress({ maxFileSize: 100000000, maxFiles: 10 }));/////////////////////////////////////////////////////////////
 
 // GraphQL routes
 app.use('/graphql', /*authModMiddleware, */createHandler({

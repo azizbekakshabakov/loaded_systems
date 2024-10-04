@@ -81,6 +81,7 @@ const Mutation = new GraphQLObjectType({
                     const { filePath } = await uploadImage(args.image);
                     imagePath = filePath;
                 }
+                console.log('imagePath', imagePath);////////////////////////////////////////////////////
 
                 // Create a new car document
                 // const newCar = new Car({
