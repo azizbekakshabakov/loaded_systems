@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AutoService } from '../../services/auto-service/auto.service';
 import { Router } from '@angular/router';
+import { Apollo, gql } from 'apollo-angular';
 
 @Component({
   selector: 'app-add-auto',
@@ -13,16 +14,38 @@ export class AddAutoComponent {
   tariff?: number;
   image?: any;
 
-  constructor(private autoService: AutoService, private router: Router) {
+  constructor(private autoService: AutoService, private router: Router, private readonly apollo: Apollo) {
   }
 
   add(): void {
     if (this.name && this.description && this.tariff && this.image) {
-      this.autoService.add(this.name, this.description, this.tariff, this.image)
-        .subscribe((data: any) => {
-          // localStorage.setItem("token", data);
-          this.router.navigate(['/tasks']);
-        });
+      this.apollo.mutate(
+        { mutation: gql`
+          mutation CreateCar($name: String!, $description: String!, $tariff: Float!, $image: Upload!) {
+            createCar(name: $name, description: $description, tariff: $tariff, image: $image) {
+              name
+              description
+              image
+              tariff
+            }
+          }
+        `,
+        variables: {
+          name: this.name,
+          description: this.description,
+          tariff: Number(this.tariff),
+          image: this.image,
+        },
+        context: {
+          useMultipart: true,
+        },
+      }).subscribe();
+
+      // this.autoService.add(this.name, this.description, this.tariff, this.image)
+      //   .subscribe((data: any) => {
+      //     // localStorage.setItem("token", data);
+      //     this.router.navigate(['/tasks']);
+      //   });
     }
   }
 

@@ -8,7 +8,12 @@ import logger from 'morgan';
 // GraphQL
 import graphqlSchema from './graphql/schema.js';
 import { createHandler } from 'graphql-http/lib/use/express';
-import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';////////////////////////////////////////////////////////////////
+// import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';////////////////////////////////////////////////////////////////
+import {ApolloServer} from "@apollo/server";
+import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
+import {expressMiddleware} from "@apollo/server/express4";
+import {typeDefs, resolvers} from './graphql/apollo-schema.js'
+// Auth middleware
 import { authModMiddleware } from './middleware/auth.js';
 import atlasCreds from './atlasCreds.js';
 
@@ -46,12 +51,28 @@ app.use('/auth/', authRouter);
 app.use('/rent/', rentRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use(graphqlUploadExpress({ maxFileSize: 100000000, maxFiles: 10 }));/////////////////////////////////////////////////////////////
+// app.use(graphqlUploadExpress({ maxFileSize: 100000000, maxFiles: 10 }));/////////////////////////////////////////////////////////////
 
 // GraphQL routes
-app.use('/graphql', /*authModMiddleware, */createHandler({
-  schema: graphqlSchema,
-  context: (req, res) => ({ req, res })
+// app.use('/graphql', /*authModMiddleware, */createHandler({
+//   schema: graphqlSchema,
+//   context: (req, res) => ({ req, res })
+// }));
+
+// GRAPHQL
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  csrfPrevention: false
+});
+
+await server.start();
+
+// Express middlewares
+app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }));
+// app.use(authModMiddleware); // Apply your authentication middleware
+app.use('/graphql', expressMiddleware(server, {
+  context: async ({ req }) => ({ req }), // Provide context if needed
 }));
 
 // catch 404 and forward to error handler

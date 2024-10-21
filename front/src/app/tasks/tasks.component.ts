@@ -5,6 +5,7 @@ import { MessageService } from '../message.service';
 import { Subscription } from 'rxjs';
 import { AutoService } from '../services/auto-service/auto.service';
 import { Router } from '@angular/router';
+import { Apollo, gql } from 'apollo-angular';
 
 @Component({
   selector: 'app-tasks',
@@ -14,17 +15,39 @@ import { Router } from '@angular/router';
 export class TasksComponent {
   tasks: any[] = [];
   balance: any = 0;
+  someData: any[] = [];
 
-  constructor(private taskService: TaskService, private autoService: AutoService, private router: Router) {}
+  constructor(private taskService: TaskService, private autoService: AutoService, private router: Router, private readonly apollo: Apollo) {}
 
   ngOnInit(): void {
     this.getTasks();
   }
 
   getTasks(): void {
-    this.taskService.getTasks().subscribe(tasks => {
-      this.tasks = tasks;
+    this.apollo
+    .watchQuery({
+      query: gql`
+        {
+          cars {
+            _id
+            name
+            description
+            image
+            tariff
+            enabled
+          }
+        }
+      `,
+    })
+    .valueChanges.subscribe((result: any) => {
+      this.tasks = result.data['cars'];
+      // this.rates = result.data?.rates;
     });
+
+    // this.taskService.getTasks().subscribe(tasks => {
+    //   this.tasks = tasks;
+    //   console.log('azik', tasks);
+    // });
 
     if (this.isUser()) {
       this.autoService.getBalance().subscribe(userBalance => {

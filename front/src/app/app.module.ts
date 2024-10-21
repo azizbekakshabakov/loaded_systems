@@ -30,6 +30,13 @@ import { AddAutoComponent } from './components/add-auto/add-auto.component';
 import { RentsComponent } from './components/rents/rents.component';
 import { SetBalanceComponent } from './components/set-balance/set-balance.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { GraphQLModule } from './graphql.module';
+import { provideApollo } from 'apollo-angular';
+import { HttpLink } from 'apollo-angular/http';
+import { InMemoryCache } from '@apollo/client/core';
+import { inject } from '@angular/core';
+import extractFiles from 'extract-files/extractFiles.mjs';
+import isExtractableFile from 'extract-files/isExtractableFile.mjs';
 
 @NgModule({
   declarations: [
@@ -67,7 +74,18 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       provide: HTTP_INTERCEPTORS,
       useClass: LoggingInterceptor,
       multi: true
-    }
+    },
+    provideApollo(() => {
+      const httpLink = inject(HttpLink);
+
+      return {
+        link: httpLink.create({
+          uri: 'http://localhost:3000/graphql',
+          extractFiles: body => extractFiles(body, isExtractableFile)
+        }),
+        cache: new InMemoryCache(),
+      };
+    }),
   ],
   bootstrap: [AppComponent]
 })

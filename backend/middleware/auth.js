@@ -35,4 +35,25 @@ const authUserMiddleware = async (req, res, next) => {
   }
 };
 
-export { authModMiddleware, authUserMiddleware };
+const authModMiddlewareGraphQL = (next) => async (root, args, context, info) => {
+  const token = context['req']['headers']['x-auth-token'];
+
+  if (!token) {
+    throw new Error('Token is missing');
+  }
+  try {
+    const decoded = jwt.verify(token, "qwerty");
+
+    const userId = decoded.id;
+    const user = await User.findOne({ _id: userId });
+
+    if (user.role != "mod") throw new Error('Invalid role');
+
+    return next(root, args, context, info);
+  } catch (err) {
+    console.log(err);
+    throw new Error('Invalid token', err);
+  }
+};
+
+export { authModMiddleware, authUserMiddleware, authModMiddlewareGraphQL };
