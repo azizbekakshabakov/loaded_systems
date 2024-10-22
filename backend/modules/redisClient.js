@@ -1,7 +1,7 @@
 import redis from 'redis';
 
 const redisClient = redis.createClient({
-    host: 'localhost', // Redis server host (default: localhost)
+    host: process.env.REDIS_HOST || 'localhost', // Redis server host (default: localhost)
     port: 6379 // Redis server port (default: 6379)
 });
 

@@ -5,17 +5,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-// GraphQL
-import graphqlSchema from './graphql/schema.js';
-import { createHandler } from 'graphql-http/lib/use/express';
-import { authModMiddleware } from './middleware/auth.js';
 import atlasCreds from './atlasCreds.js';
 
-// everyday
-import './scheduler.js';
-
 import indexRouter from './routes/index.js';
-import authRouter from './routes/auth.js';
 
 const app = express();
 import cors from 'cors';
@@ -40,19 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 app.use('/', indexRouter);
-app.use('/auth/', authRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// GraphQL routes
-app.use('/graphql', /*authModMiddleware, */createHandler({
-  schema: graphqlSchema,
-  context: (req, res) => ({ req, res })
-}));
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
 
 // error handler
 app.use(function(err, req, res, next) {

@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  loaded-image-service:
+    image: loaded-image-service
+    container_name: loaded-image-service
+    ports:
+      - "3001:3001"
+
+  loaded-charge-service:
+    image: loaded-charge-service
+    container_name: loaded-charge-service
+    ports:
+      - "3002:3002"
+
+  redis:
+    image: redis
+    container_name: my-redis
+    ports:
+      - "6379:6379"
+
+#  loaded-main-service:
+#    image: loaded-main-service
+#    container_name: loaded-main-service-container
+#    ports:
+#      - "3000:3000"
+#    depends_on:
+#      - redis
+#      - loaded-image-service
+#    environment:
+#      REDIS_HOST: my-redis

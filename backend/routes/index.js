@@ -57,7 +57,7 @@ router.get("/", async (req, res) => {
     } else {
         console.log("Нет кэша");
         const cars = await Car.find();
-        await redisClient.set(key, JSON.stringify({ data: cars }), 'EX', 3600);
+        await redisClient.set(key, JSON.stringify({ data: cars }), 'EX', 10);
         response = res.status(200).send({ data: cars });
     }
 

@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { User } from '../schemas/user.js';
+import {redisClient} from "../modules/redisClient.js";
 
 const authModMiddleware = async (req, res, next) => {
   const token = req.header("x-auth-token");
@@ -35,25 +36,64 @@ const authUserMiddleware = async (req, res, next) => {
   }
 };
 
-const authModMiddlewareGraphQL = (next) => async (root, args, context, info) => {
+const authModMiddlewareGraphQL = (next) => {
+  return authMiddlewareGraphQLCommon(next, ['mod']);
+};
+
+const authUserMiddlewareGraphQL = (next) => {
+  return authMiddlewareGraphQLCommon(next, ['user']);
+};
+
+const authAnyRoleMiddlewareGraphQL = (next) => {
+  return authMiddlewareGraphQLCommon(next);
+};
+
+const authMiddlewareGraphQLCommon = (next, userRoles = []) => async (root, args, context, info) => {
   const token = context['req']['headers']['x-auth-token'];
 
   if (!token) {
     throw new Error('Token is missing');
   }
+
+  // REDIS CACHING
+  const key = `__express__/users/${token}`;
+  const cachedData = await redisClient.get(key);
+  if (cachedData) {
+    console.log('Fetched balance from cache');
+    context.user = JSON.parse(cachedData);
+    return next(root, args, context, info);
+  }
+
   try {
+    // VERIFY/DECODE JWT
     const decoded = jwt.verify(token, "qwerty");
 
+    // FETCH USER
     const userId = decoded.id;
     const user = await User.findOne({ _id: userId });
 
-    if (user.role != "mod") throw new Error('Invalid role');
+    // IF THE USER DOESN'T HAVE CERTAIN ROLES THROW ERROR
+    if (userRoles) {
+      for (const userRole of userRoles) {
+        if (user.role != userRole) throw new Error('Invalid role');
+      }
+    }
+
+    // SAVE USER TO CONTEXT FOR FUTURE USE
+    context.user = user;
+    delete user['password'];
+
+    // WRITE THE USER TO REDIS
+    await redisClient.set(key, JSON.stringify(user), {
+      EX: 10,
+      NX: true
+    });
 
     return next(root, args, context, info);
   } catch (err) {
     console.log(err);
     throw new Error('Invalid token', err);
   }
-};
+}
 
-export { authModMiddleware, authUserMiddleware, authModMiddlewareGraphQL };
+export { authModMiddleware, authUserMiddleware, authModMiddlewareGraphQL, authUserMiddlewareGraphQL, authAnyRoleMiddlewareGraphQL };

@@ -35,39 +35,79 @@ export class TasksComponent {
             image
             tariff
             enabled
+          },
+          user {
+            balance
           }
         }
       `,
     })
     .valueChanges.subscribe((result: any) => {
       this.tasks = result.data['cars'];
+
+      if (this.isUser()) {
+        this.balance = result.data['user']['balance'];
+      }
       // this.rates = result.data?.rates;
     });
 
+    // REST VARIANT
     // this.taskService.getTasks().subscribe(tasks => {
     //   this.tasks = tasks;
     //   console.log('azik', tasks);
     // });
 
-    if (this.isUser()) {
-      this.autoService.getBalance().subscribe(userBalance => {
-        this.balance = userBalance['data'];
-        // console.log(this.balance);
-      });
-    }
+    // REST VARIANT
+    // if (this.isUser()) {
+    //   this.autoService.getBalance().subscribe(userBalance => {
+    //     this.balance = userBalance['data'];
+    //     // console.log(this.balance);
+    //   });
+    // }
   }
 
   delete(task: Task): void {
-    this.taskService.deleteTask(task._id).subscribe(task => {
-      this.getTasks();
+    // REST VARIANT
+    // this.taskService.deleteTask(task._id).subscribe(task => {
+    //   this.getTasks();
+    // });
+
+    this.apollo.mutate(
+      { mutation: gql`
+          mutation DeleteCar($id: ID!) {
+            deleteCar(_id: $id)
+          }
+        `,
+        variables: {
+          id: task._id
+        },
+      }).subscribe((data: any) => {
+      this.router.navigate(['/tasks']);
     });
   }
 
   rent(car: any): void {
-    this.autoService.rent(car._id).subscribe(task => {
-      this.getTasks();
-      this.router.navigate(['/rents']);
-    });
+    // REST VARIANT
+    // this.autoService.rent(car._id).subscribe(task => {
+    //   this.getTasks();
+    //   this.router.navigate(['/rents']);
+    // });
+
+    // GRAPHQL VARIANT
+    this.apollo.mutate(
+      { mutation: gql`
+          mutation Rent($carId: ID!) {
+            rent(carId: $carId)
+          }
+        `,
+        variables: {
+          carId: car._id
+        },
+      }).subscribe((data: any) => {
+        console.log(data);
+        this.router.navigate(['/rents']);
+      }
+    );
   }
 
   isMod() {

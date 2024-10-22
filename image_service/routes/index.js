@@ -1,8 +1,5 @@
 import { Router } from 'express'; // Import Router as router
 import multer from 'multer';
-import { Car } from '../schemas/car.js';
-import { authModMiddleware, authUserMiddleware } from '../middleware/auth.js';
-import { redisClient } from '../modules/redisClient.js';
 
 // СОЗДАТЬ ЭКЗЕМПЛЯР Router
 const router = Router();
@@ -24,7 +21,7 @@ router.post('/add-image', upload.single('image'), async (req, res) => {
       res.status(201).json({ message: 'Картинка добавлена', image: image });
   } catch (error) {
       console.log('Кярьтинькя ни дабавлина');
-      res.status(404).json({ message: 'Кярьтинькя ни дабавлина', error });
+      res.status(404).json({ message: 'Картинка ни дабавлина', error });
   }
 });
 

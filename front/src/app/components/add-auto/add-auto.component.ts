@@ -39,8 +39,12 @@ export class AddAutoComponent {
         context: {
           useMultipart: true,
         },
-      }).subscribe();
+      }).subscribe((data: any) => {
+        console.log(data);
+        this.router.navigate(['/tasks']);
+      });
 
+      // С ПОМОЩЬЮ REST
       // this.autoService.add(this.name, this.description, this.tariff, this.image)
       //   .subscribe((data: any) => {
       //     // localStorage.setItem("token", data);

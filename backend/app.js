@@ -6,8 +6,8 @@ import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 // GraphQL
-import graphqlSchema from './graphql/schema.js';
-import { createHandler } from 'graphql-http/lib/use/express';
+// import graphqlSchema from './graphql/schema.js';
+// import { createHandler } from 'graphql-http/lib/use/express';
 // import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';////////////////////////////////////////////////////////////////
 import {ApolloServer} from "@apollo/server";
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
@@ -17,8 +17,8 @@ import {typeDefs, resolvers} from './graphql/apollo-schema.js'
 import { authModMiddleware } from './middleware/auth.js';
 import atlasCreds from './atlasCreds.js';
 
-// everyday
-import './scheduler.js';
+/* REMOVE */
+// import './scheduler.js';
 
 import indexRouter from './routes/index.js';
 import authRouter from './routes/auth.js';
@@ -51,14 +51,6 @@ app.use('/auth/', authRouter);
 app.use('/rent/', rentRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// app.use(graphqlUploadExpress({ maxFileSize: 100000000, maxFiles: 10 }));/////////////////////////////////////////////////////////////
-
-// GraphQL routes
-// app.use('/graphql', /*authModMiddleware, */createHandler({
-//   schema: graphqlSchema,
-//   context: (req, res) => ({ req, res })
-// }));
-
 // GRAPHQL
 const server = new ApolloServer({
   typeDefs,
@@ -74,11 +66,6 @@ app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }));
 app.use('/graphql', expressMiddleware(server, {
   context: async ({ req }) => ({ req }), // Provide context if needed
 }));
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
 
 // error handler
 app.use(function(err, req, res, next) {
