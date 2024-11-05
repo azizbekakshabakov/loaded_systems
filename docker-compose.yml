@@ -1,6 +1,18 @@
 version: '3.8'
 
 services:
+  loaded-main-service:
+    image: loaded-main-service
+    container_name: loaded-main-service
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+      - loaded-image-service
+    environment:
+      - REDIS_HOST=redis
+      - IMAGE_SERVICE=loaded-image-service
+
   loaded-image-service:
     image: loaded-image-service
     container_name: loaded-image-service

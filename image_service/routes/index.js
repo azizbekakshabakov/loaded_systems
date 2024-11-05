@@ -19,9 +19,10 @@ router.post('/add-image', upload.single('image'), async (req, res) => {
       const image = req.file ? req.file.path : null;
 
       res.status(201).json({ message: 'Картинка добавлена', image: image });
+      //rabbitmq
   } catch (error) {
-      console.log('Кярьтинькя ни дабавлина');
-      res.status(404).json({ message: 'Картинка ни дабавлина', error });
+      console.log('Картинка не добавлена');
+      res.status(404).json({ message: 'Картинка не добавлена', error });
   }
 });
 
